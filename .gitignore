@@ -81,7 +81,7 @@ target/
 # IPython
 profile_default/
 ipython_config.py
-
+Roadmap End-to-End — Modern Enterprise Data Platform.md
 # pyenv
 #   For a library or package, you might want to ignore these files since the code is
 #   intended to run in multiple environments; otherwise, check them in:
@@ -216,3 +216,5 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+.agent/

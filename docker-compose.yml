@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  postgres-source:
+    image: postgres:15
+    container_name: smart_office_postgres_source
+    environment:
+      POSTGRES_USER: smartoffice
+      POSTGRES_PASSWORD: smartofficepassword
+      POSTGRES_DB: smart_office
+    ports:
+      - "15432:5432"
+    # Important: Set wal_level=logical to allow Debezium (CDC) to read data changes
+    command: ["postgres", "-c", "wal_level=logical"]
+    volumes:
+      # Mount DDL directory to docker-entrypoint-initdb.d to run initialization scripts on startup
+      - ./source/ddl:/docker-entrypoint-initdb.d
+      - postgres_source_data:/var/lib/postgresql/data
+    networks:
+      - smart-office-network
+
+networks:
+  smart-office-network:
+    driver: bridge
+
+volumes:
+  postgres_source_data:
