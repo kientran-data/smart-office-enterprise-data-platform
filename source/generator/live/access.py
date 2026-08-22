@@ -1,5 +1,6 @@
 import random
 import logging
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +64,7 @@ class AccessSimulator:
                 INSERT INTO access.access_events (employee_id, door_id, event_time, access_type, status, created_at)
                 VALUES (%s, %s, %s, %s, %s, %s)
                 """,
-                (emp_id, door['id'], simulation_time, action, status, simulation_time)
+                (emp_id, door['id'], simulation_time, action, status, datetime.now())
             )
         conn.commit()
         logger.info("ACCESS employee=%s type=%s status=%s door=%s", emp_id, action, status, door['id'])

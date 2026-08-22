@@ -1,6 +1,6 @@
 import random
 import logging
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +35,7 @@ class MeetingSimulator:
             cur.execute("""
                 INSERT INTO meeting.bookings (room_id, organizer_id, title, start_time, end_time, attendee_count, status, created_at, updated_at)
                 VALUES (%s, %s, %s, %s, %s, %s, 'PENDING', %s, %s) RETURNING booking_id
-            """, (room['id'], organizer['id'], title, start_time, end_time, attendees, simulation_time, simulation_time))
+            """, (room['id'], organizer['id'], title, start_time, end_time, attendees, datetime.now(), datetime.now()))
             
             bk_id = cur.fetchone()[0]
         conn.commit()
@@ -62,6 +62,6 @@ class MeetingSimulator:
                 new_status = random.choices(['COMPLETED', 'NO_SHOW'], weights=[0.9, 0.1])[0]
                 
             if new_status:
-                cur.execute("UPDATE meeting.bookings SET status = %s, updated_at = %s WHERE booking_id = %s", (new_status, simulation_time, bk_id))
+                cur.execute("UPDATE meeting.bookings SET status = %s, updated_at = %s WHERE booking_id = %s", (new_status, datetime.now(), bk_id))
                 conn.commit()
                 logger.info("BOOKING UPDATE booking=%s %s -> %s", bk_id, status, new_status)

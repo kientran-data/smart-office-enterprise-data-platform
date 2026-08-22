@@ -1,5 +1,6 @@
 import random
 import logging
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -70,7 +71,7 @@ class IoTSimulator:
                 INSERT INTO iot.device_events (device_id, event_time, metric_type, metric_value, unit, created_at)
                 VALUES (%s, %s, %s, %s, %s, %s)
                 """,
-                (dev_id, simulation_time, metric_type, metric_value, unit, simulation_time)
+                (dev_id, simulation_time, metric_type, metric_value, unit, datetime.now())
             )
         conn.commit()
         logger.info("IOT device=%s metric=%s value=%s", dev_id, metric_type, metric_value)
