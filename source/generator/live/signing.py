@@ -40,9 +40,9 @@ class SigningSimulator:
             with conn.cursor() as cur:
                 cur.execute("""
                     SELECT request_id, document_id, signing_order FROM signing.signing_requests
-                    WHERE status = 'PENDING'
+                    WHERE status = 'PENDING' AND requested_at <= %s
                     ORDER BY requested_at ASC LIMIT 1
-                """)
+                """, (simulation_time,))
                 row = cur.fetchone()
                 if not row:
                     return
