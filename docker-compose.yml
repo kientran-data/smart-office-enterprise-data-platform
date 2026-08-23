@@ -149,6 +149,49 @@ services:
     volumes:
       - minio_data:/data
 
+  spark-master:
+    image: apache/spark:4.2.0-python3
+    container_name: smart-office-spark-master
+    hostname: spark-master
+
+    command:
+      - /opt/spark/bin/spark-class
+      - org.apache.spark.deploy.master.Master
+
+    ports:
+      - "7077:7077"
+      - "8080:8080"
+
+    volumes:
+      - ./spark/jobs:/opt/spark/jobs
+
+    depends_on:
+      - kafka
+      - minio
+
+  spark-worker:
+    image: apache/spark:4.2.0-python3
+    container_name: smart-office-spark-worker
+    hostname: spark-worker
+
+    command:
+      - /opt/spark/bin/spark-class
+      - org.apache.spark.deploy.worker.Worker
+      - spark://spark-master:7077
+
+    environment:
+      SPARK_WORKER_CORES: 2
+      SPARK_WORKER_MEMORY: 2g
+
+    ports:
+      - "8081:8081"
+
+    volumes:
+      - ./spark/jobs:/opt/spark/jobs
+
+    depends_on:
+      - spark-master
+
 volumes:
   source_postgres_data:
   kafka_data:
