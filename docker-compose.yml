@@ -101,6 +101,33 @@ services:
       timeout: 5s
       retries: 10
 
+  debezium-connect:
+    image: quay.io/debezium/connect:3.6.1.Final
+    container_name: smart-office-debezium-connect
+
+    restart: unless-stopped
+
+    ports:
+      - "8083:8083"
+
+    environment:
+      BOOTSTRAP_SERVERS: kafka:19092
+      GROUP_ID: smartoffice-connect-cluster
+      CONFIG_STORAGE_TOPIC: smartoffice_connect_configs
+      OFFSET_STORAGE_TOPIC: smartoffice_connect_offsets
+      STATUS_STORAGE_TOPIC: smartoffice_connect_status
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE: "false"
+      CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE: "false"
+
+    depends_on:
+      kafka:
+        condition: service_healthy
+      source-postgres:
+        condition: service_healthy
+
 volumes:
   source_postgres_data:
   kafka_data:
